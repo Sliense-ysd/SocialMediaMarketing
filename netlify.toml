@@ -1,11 +1,13 @@
 [build]
   base = "apps/frontend"
-  command = "cd apps/frontend && npm run build"
-  publish = "apps/frontend/.next"
+  command = "cd ../.. && npx pnpm install --filter=frontend... && cd apps/frontend && npx pnpm build"
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20"
   NPM_FLAGS = "--version"
+  NETLIFY_USE_PNPM = "true"
+  PNPM_VERSION = "10.6.1"
 
 # 移除不兼容的重定向
 # Next.js处理自己的路由，不需要这个重定向 
@@ -17,7 +19,7 @@
 
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/.netlify/functions/next"
   status = 200
   force = false 
 
