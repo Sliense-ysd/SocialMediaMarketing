@@ -1,16 +1,14 @@
 [build]
   base = "apps/frontend"
-  command = "cd ../.. && npx pnpm install --filter=frontend... && cd apps/frontend && npx pnpm build"
+  command = "npm install && npm run build"
   publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20"
   NPM_FLAGS = "--version"
-  NETLIFY_USE_PNPM = "true"
-  PNPM_VERSION = "10.6.1"
 
-# 移除不兼容的重定向
-# Next.js处理自己的路由，不需要这个重定向 
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
 
 [[redirects]]
   from = "/auth/callback/*"
@@ -21,7 +19,3 @@
   from = "/*"
   to = "/.netlify/functions/next"
   status = 200
-  force = false 
-
-[[plugins]]
-  package = "@netlify/plugin-nextjs" 

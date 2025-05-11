@@ -53,6 +53,10 @@
    - 设置构建命令：`cd ../.. && pnpm install && cd apps/frontend && pnpm build`
    - 设置输出目录：`.next`
    - 设置根目录：`apps/frontend`
+Base directory: apps/frontend
+Build Command: npm run build
+Output Directory: .next
+Install Command: cd ../.. && npm install
    - 添加环境变量：
      - `NEXT_PUBLIC_SUPABASE_URL`：您的Supabase项目URL
      - `NEXT_PUBLIC_SUPABASE_ANON_KEY`：您的Supabase匿名密钥
