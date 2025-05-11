@@ -1,7 +1,7 @@
 [build]
   base = "apps/frontend"
-  command = "cd ../.. && pnpm install --no-frozen-lockfile && cd apps/frontend && pnpm build"
-  publish = ".next"
+  command = "cd apps/frontend && npm run build"
+  publish = "apps/frontend/.next"
 
 [build.environment]
   NODE_VERSION = "20"
@@ -9,3 +9,17 @@
 
 # 移除不兼容的重定向
 # Next.js处理自己的路由，不需要这个重定向 
+
+[[redirects]]
+  from = "/auth/callback/*"
+  to = "/auth/callback/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  force = false 
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs" 
