@@ -1,6 +1,6 @@
 [build]
   base = "apps/frontend"
-  command = "cd ../.. && pnpm install && cd apps/frontend && pnpm build"
+  command = "cd ../.. && pnpm install --no-frozen-lockfile && cd apps/frontend && pnpm build"
   publish = ".next"
 
 [build.environment]
