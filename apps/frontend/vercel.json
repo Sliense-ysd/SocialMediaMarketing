@@ -1,0 +1,12 @@
+{
+  "framework": "nextjs",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" }
+  ],
+  "buildCommand": "cd ../.. && pnpm install && cd apps/frontend && pnpm build",
+  "env": {
+    "NEXT_PUBLIC_SUPABASE_URL": "请在Vercel控制面板设置此环境变量",
+    "NEXT_PUBLIC_SUPABASE_ANON_KEY": "请在Vercel控制面板设置此环境变量",
+    "NEXT_PUBLIC_BACKEND_URL": "可选：设置后端API的URL，如果使用Supabase可以不填"
+  }
+} 

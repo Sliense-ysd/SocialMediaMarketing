@@ -1,0 +1,60 @@
+steps:
+# 使用Node.js镜像来安装依赖和构建
+- name: 'node:20'
+  entrypoint: npm
+  args: ['install', '-g', 'pnpm']
+  
+- name: 'node:20'
+  entrypoint: pnpm
+  args: ['install']
+  
+# 构建前端应用
+- name: 'node:20'
+  entrypoint: pnpm
+  args: ['build:frontend']
+  
+# 构建后端应用
+- name: 'node:20'
+  entrypoint: pnpm
+  args: ['build:backend']
+  
+# 创建Docker镜像
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/frontend', '-f', 'apps/frontend/Dockerfile', '.']
+  
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/backend', '-f', 'apps/backend/Dockerfile', '.']
+  
+# 推送Docker镜像
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/frontend']
+  
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/$PROJECT_ID/backend']
+  
+# 部署到Cloud Run
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: 'gcloud'
+  args: [
+    'run', 'deploy', 'frontend',
+    '--image', 'gcr.io/$PROJECT_ID/frontend',
+    '--platform', 'managed',
+    '--region', 'us-central1',
+    '--allow-unauthenticated'
+  ]
+  
+- name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+  entrypoint: 'gcloud'
+  args: [
+    'run', 'deploy', 'backend',
+    '--image', 'gcr.io/$PROJECT_ID/backend',
+    '--platform', 'managed',
+    '--region', 'us-central1',
+    '--allow-unauthenticated'
+  ]
+  
+images:
+- 'gcr.io/$PROJECT_ID/frontend'
+- 'gcr.io/$PROJECT_ID/backend'
+
+timeout: 3600s 

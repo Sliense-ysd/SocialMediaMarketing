@@ -1,0 +1,50 @@
+services:
+  - type: web
+    name: postiz-frontend
+    env: node
+    plan: starter
+    buildCommand: cd apps/frontend && npm install && npm run build
+    startCommand: cd apps/frontend && npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NEXT_PUBLIC_BACKEND_URL
+        value: https://api.your-production-domain.com
+      - key: FRONTEND_URL
+        value: https://your-production-domain.com
+
+  - type: web
+    name: postiz-backend
+    env: node
+    plan: starter
+    buildCommand: cd apps/backend && npm install && npm run build
+    startCommand: cd apps/backend && npm run start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: DATABASE_URL
+        fromDatabase:
+          name: postgres
+          property: connectionString
+      - key: REDIS_URL
+        fromService:
+          name: redis
+          type: redis
+          property: connectionString
+      - key: JWT_SECRET
+        value: your-jwt-secret-key
+      - key: FRONTEND_URL
+        value: https://your-production-domain.com
+      - key: GOOGLE_CLIENT_ID
+        value: GOOGLE_CLIENT_ID_PLACEHOLDER
+      - key: GOOGLE_CLIENT_SECRET
+        value: GOOGLE_CLIENT_SECRET_PLACEHOLDER
+
+  - type: redis
+    name: redis
+    plan: starter
+    ipAllowList: []
+
+databases:
+  - name: postgres
+    plan: starter

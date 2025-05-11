@@ -1,0 +1,13 @@
+[build]
+  base = "apps/frontend"
+  command = "cd ../.. && pnpm install && cd apps/frontend && pnpm build"
+  publish = "apps/frontend/.next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS = "--version"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200 
