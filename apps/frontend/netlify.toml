@@ -1,11 +1,15 @@
 [build]
-  base = "apps/frontend"
   command = "cd ../.. && pnpm install && cd apps/frontend && pnpm build"
   publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20"
   NPM_FLAGS = "--version"
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
 
-# 移除不兼容的重定向
-# Next.js处理自己的路由，不需要这个重定向 
+[functions]
+  directory = ".netlify/functions"
+
+# 使用Next.js的特定部署设置
+[[plugins]]
+  package = "@netlify/plugin-nextjs" 

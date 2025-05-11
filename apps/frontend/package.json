@@ -14,5 +14,8 @@
   "license": "ISC",
   "dependencies": {
     "@supabase/supabase-js": "^2.49.4"
+  },
+  "devDependencies": {
+    "@netlify/plugin-nextjs": "^4.41.3"
   }
 }
