@@ -17,5 +17,8 @@
   },
   "devDependencies": {
     "@netlify/plugin-nextjs": "^4.41.3"
+  },
+  "resolutions": {
+    "@swc/cli": "0.3.14"
   }
 }
