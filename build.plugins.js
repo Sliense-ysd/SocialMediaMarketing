@@ -1,7 +1,11 @@
-const { readdirSync, statSync, writeFileSync } = require('fs');
+const { readdirSync, statSync, writeFileSync, existsSync, mkdirSync } = require('fs');
 const { join } = require('path');
 
 function isNonEmptyFolder(folderPath) {
+  if (!existsSync(folderPath)) {
+    return false;
+  }
+  
   const items = readdirSync(folderPath);
   // Check if there are any items in the folder
   return items.some((item) => {
@@ -17,19 +21,37 @@ function isNonEmptyFolder(folderPath) {
 
 // Function to get all non-empty folders
 function getNonEmptyFolders(rootFolder) {
-  const result = [];
-  const items = readdirSync(rootFolder);
-
-  items.forEach((item) => {
-    const fullPath = join(rootFolder, item);
-    const stats = statSync(fullPath);
-    if (stats.isDirectory() && isNonEmptyFolder(fullPath)) {
-      result.push(item);
+  // 创建目录路径如果不存在
+  const dirs = rootFolder.split('/');
+  let currentPath = '.';
+  
+  for (const dir of dirs) {
+    currentPath = join(currentPath, dir);
+    if (!existsSync(currentPath)) {
+      mkdirSync(currentPath, { recursive: true });
+      console.log(`Created directory: ${currentPath}`);
     }
-  });
+  }
+  
+  try {
+    const result = [];
+    const items = readdirSync(rootFolder);
 
-  return result;
+    items.forEach((item) => {
+      const fullPath = join(rootFolder, item);
+      const stats = statSync(fullPath);
+      if (stats.isDirectory() && isNonEmptyFolder(fullPath)) {
+        result.push(item);
+      }
+    });
+
+    return result;
+  } catch (error) {
+    console.error(`Error reading directory ${rootFolder}:`, error);
+    return [];
+  }
 }
+
 const abc = [
   'a',
   'b',
@@ -58,20 +80,27 @@ const abc = [
   'y',
   'z',
 ];
-const list = getNonEmptyFolders('./libraries/plugins/src/list');
-const fileContent = `${list
-  .map((p, index) => {
-    return `import Module${abc[
-      index
-    ].toUpperCase()} from '@gitroom/plugins/list/${p}/backend/module';`;
-  })
-  .join('\n')}
+
+const listPath = './libraries/plugins/src/list';
+const list = getNonEmptyFolders(listPath);
+const fileContent = list.length === 0 
+  ? `export default [];` 
+  : `${list
+    .map((p, index) => {
+      return `import Module${abc[
+        index
+      ].toUpperCase()} from '@gitroom/plugins/list/${p}/backend/module';`;
+    })
+    .join('\n')}
 
 export default [${list
-  .map((p, index) => {
-    return `Module${abc[index].toUpperCase()}`;
-  })
-  .join(', ')}];
+    .map((p, index) => {
+      return `Module${abc[index].toUpperCase()}`;
+    })
+    .join(', ')}];
 `;
 
-writeFileSync('./libraries/plugins/src/plugins.ts', fileContent);
+// 确保plugins.ts文件存在
+const pluginsFilePath = './libraries/plugins/src/plugins.ts';
+writeFileSync(pluginsFilePath, fileContent);
+console.log(`Successfully wrote to ${pluginsFilePath}`);
