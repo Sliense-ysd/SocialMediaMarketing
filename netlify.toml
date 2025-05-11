@@ -1,7 +1,7 @@
 [build]
   base = "apps/frontend"
   command = "cd ../.. && pnpm install && cd apps/frontend && pnpm build"
-  publish = "apps/frontend/.next"
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "20"
