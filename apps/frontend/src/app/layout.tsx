@@ -19,9 +19,10 @@ import { FacebookComponent } from '@gitroom/frontend/components/layout/facebook.
 const chakra = Chakra_Petch({ weight: '400', subsets: ['latin'] });
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
-  const Plausible = !!process.env.STRIPE_PUBLISHABLE_KEY
+  const PlausibleComponent = !!process.env.STRIPE_PUBLISHABLE_KEY
     ? PlausibleProvider
     : Fragment;
+  const plausibleDomain = !!process.env.IS_GENERAL ? 'postiz.com' : 'gitroom.com';
 
   return (
     <html className={interClass}>
@@ -51,19 +52,31 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         >
           <ToltScript />
           <FacebookComponent />
-          <Plausible
-            domain={!!process.env.IS_GENERAL ? 'postiz.com' : 'gitroom.com'}
-          >
-            <PHProvider
-              phkey={process.env.NEXT_PUBLIC_POSTHOG_KEY}
-              host={process.env.NEXT_PUBLIC_POSTHOG_HOST}
-            >
-              <LayoutContext>
-                <UtmSaver />
-                {children}
-              </LayoutContext>
-            </PHProvider>
-          </Plausible>
+          {PlausibleComponent === Fragment ? (
+            <Fragment>
+              <PHProvider
+                phkey={process.env.NEXT_PUBLIC_POSTHOG_KEY}
+                host={process.env.NEXT_PUBLIC_POSTHOG_HOST}
+              >
+                <LayoutContext>
+                  <UtmSaver />
+                  {children}
+                </LayoutContext>
+              </PHProvider>
+            </Fragment>
+          ) : (
+            <PlausibleComponent domain={plausibleDomain}>
+              <PHProvider
+                phkey={process.env.NEXT_PUBLIC_POSTHOG_KEY}
+                host={process.env.NEXT_PUBLIC_POSTHOG_HOST}
+              >
+                <LayoutContext>
+                  <UtmSaver />
+                  {children}
+                </LayoutContext>
+              </PHProvider>
+            </PlausibleComponent>
+          )}
         </VariableContextComponent>
       </body>
     </html>

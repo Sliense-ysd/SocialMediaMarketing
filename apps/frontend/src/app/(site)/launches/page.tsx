@@ -2,12 +2,13 @@
 
 import { useEffect, useState } from 'react';
 import { dataService, auth } from '../../../utils/supabase';
-import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 export default function LaunchesPage() {
   const [posts, setPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
+  const router = useRouter();
 
   useEffect(() => {
     // 检查用户登录状态
@@ -41,9 +42,12 @@ export default function LaunchesPage() {
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold">社交媒体发布日历</h1>
         {!user ? (
-          <Link href="/auth/login" className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
+          <button 
+            onClick={() => router.push('/auth/login')} 
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+          >
             登录
-          </Link>
+          </button>
         ) : (
           <div className="flex items-center space-x-4">
             <span>欢迎, {user.email}</span>

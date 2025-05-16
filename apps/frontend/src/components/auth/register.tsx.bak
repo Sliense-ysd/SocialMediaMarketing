@@ -118,36 +118,36 @@ export function RegisterAfter({
   const onSubmit: SubmitHandler<Inputs> = async (data) => {
     setLoading(true);
 
-    try {
-      const response = await fetchData('/auth/register', {
-        method: 'POST',
-        body: JSON.stringify({ ...data }),
-      });
-      
-      setLoading(false);
+    await fetchData('/auth/register', {
+      method: 'POST',
+      body: JSON.stringify({ ...data }),
+    })
+      .then((response) => {
+        setLoading(false);
 
-      if (response.status === 200) {
-        fireEvents('register');
-        await track(TrackEnum.CompleteRegistration);
-        
-        if (response.headers.get('activate') === 'true') {
-          router.push('/auth/activate');
+        if (response.status === 200) {
+          fireEvents('register');
+          return track(TrackEnum.CompleteRegistration).then(() => {
+            if (response.headers.get('activate') === 'true') {
+              router.push('/auth/activate');
+            } else {
+              router.push('/auth/login');
+            }
+          });
         } else {
-          router.push('/auth/login');
+          form.setError('email', {
+            message: getHelpfulReasonForRegistrationFailure(response.status),
+          });
         }
-      } else {
-        const errorText = await response.text();
+      })
+      .catch((e) => {
         form.setError('email', {
-          message: errorText || getHelpfulReasonForRegistrationFailure(response.status),
+          message:
+            'General error: ' +
+            e.toString() +
+            '. Please check your browser console.',
         });
-      }
-    } catch (e) {
-      setLoading(false);
-      console.error('Registration error:', e);
-      form.setError('email', {
-        message: 'General error: ' + (e instanceof Error ? e.message : String(e)) + '. Please check your browser console.',
       });
-    }
   };
 
   return (
@@ -158,11 +158,16 @@ export function RegisterAfter({
             Sign Up
           </h1>
         </div>
-        {!isAfterProvider && (
-          <div className="gap-[5px] flex flex-col">
-            <GoogleProvider />
-          </div>
-        )}
+        {!isAfterProvider &&
+          (!isGeneral ? (
+            <GithubProvider />
+          ) : (
+            <div className="gap-[5px] flex flex-col">
+              <GoogleProvider />
+              {!!neynarClientId && <FarcasterProvider />}
+              {billingEnabled && <WalletProvider />}
+            </div>
+          ))}
         {!isAfterProvider && (
           <div className="h-[20px] mb-[24px] mt-[24px] relative">
             <div className="absolute w-full h-[1px] bg-fifth top-[50%] -translate-y-[50%]" />
