@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useUser } from '../../hooks/useSupabase';
-import { supabase, signOut } from '../../utils/supabase';
+import { supabase, auth } from '../../utils/supabase';
 
 export default function ProfilePage() {
   const { user, loading: userLoading } = useUser();
@@ -35,7 +35,7 @@ export default function ProfilePage() {
   }, [user, userLoading, router]);
 
   const handleLogout = async () => {
-    await signOut();
+    await auth.signOut();
     router.push('/login');
   };
 

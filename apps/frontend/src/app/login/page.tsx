@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { signInWithGoogle } from '../../utils/supabase';
+import { auth } from '../../utils/supabase';
 
 export default function LoginPage() {
   const [loading, setLoading] = useState(false);
@@ -13,7 +13,7 @@ export default function LoginPage() {
   const handleGoogleLogin = async () => {
     try {
       setLoading(true);
-      const { data, error } = await signInWithGoogle();
+      const { data, error } = await auth.signInWithGoogle();
       
       if (error) {
         throw error;

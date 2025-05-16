@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase, getCurrentUser } from '../utils/supabase';
+import { supabase, auth } from '../utils/supabase';
 import { User, Session, AuthChangeEvent } from '@supabase/supabase-js';
 
 export function useUser() {
@@ -12,7 +12,7 @@ export function useUser() {
     const fetchUser = async () => {
       try {
         setLoading(true);
-        const { user, error } = await getCurrentUser();
+        const { user, error } = await auth.getCurrentUser();
         
         if (error) {
           throw error;

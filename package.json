@@ -261,5 +261,8 @@
     "onlyBuiltDependencies": [
       "bcrypt"
     ]
+  },
+  "resolutions": {
+    "@swc/cli": "0.3.14"
   }
 }
