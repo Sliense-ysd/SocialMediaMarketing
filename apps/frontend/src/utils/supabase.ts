@@ -25,6 +25,17 @@ export const auth = {
     return { data, error };
   },
   
+  // 使用GitHub登录
+  signInWithGithub: async () => {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'github',
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`
+      }
+    });
+    return { data, error };
+  },
+  
   // 获取当前用户
   getCurrentUser: async () => {
     const { data, error } = await supabase.auth.getSession();

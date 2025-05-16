@@ -1,23 +1,21 @@
 import { useCallback } from 'react';
 import Image from 'next/image';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
 import interClass from '@gitroom/react/helpers/inter.font';
 import { useVariables } from '@gitroom/react/helpers/variable.context';
+import { supabase } from '../../../utils/supabase';
 
 export const OauthProvider = () => {
-  const fetch = useFetch();
   const { oauthLogoUrl, oauthDisplayName } = useVariables();
 
   const gotoLogin = useCallback(async () => {
     try {
-      const response = await fetch('/auth/oauth/GENERIC');
-      if (!response.ok) {
-        throw new Error(
-          `Login link request failed with status ${response.status}`
-        );
-      }
-      const link = await response.text();
-      window.location.href = link;
+      // 使用 Supabase 的通用 OAuth 登录
+      await supabase.auth.signInWithOAuth({
+        provider: 'azure',  // 或其他支持的提供商，如 'bitbucket', 'discord' 等
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
     } catch (error) {
       console.error('Failed to get generic oauth login link:', error);
     }

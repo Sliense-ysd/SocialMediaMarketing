@@ -1,12 +1,11 @@
 import { useCallback } from 'react';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
 import interClass from '@gitroom/react/helpers/inter.font';
+import { auth } from '../../../utils/supabase';
 
 export const GithubProvider = () => {
-  const fetch = useFetch();
   const gotoLogin = useCallback(async () => {
-    const link = await (await fetch('/auth/oauth/GITHUB')).text();
-    window.location.href = link;
+    // 使用 Supabase 的 GitHub 登录
+    await auth.signInWithGithub();
   }, []);
 
   return (

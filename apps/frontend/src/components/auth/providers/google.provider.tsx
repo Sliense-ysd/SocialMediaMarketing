@@ -1,12 +1,10 @@
 import { useCallback } from 'react';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
 import interClass from '@gitroom/react/helpers/inter.font';
+import { auth } from '../../../utils/supabase';
 
 export const GoogleProvider = () => {
-  const fetch = useFetch();
   const gotoLogin = useCallback(async () => {
-    const link = await (await fetch('/auth/oauth/GOOGLE')).text();
-    window.location.href = link;
+    await auth.signInWithGoogle();
   }, []);
 
   return (
