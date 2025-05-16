@@ -8,13 +8,9 @@ import { Input } from '@gitroom/react/form/input';
 import { useMemo, useState } from 'react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
 import { LoginUserDto } from '@gitroom/nestjs-libraries/dtos/auth/login.user.dto';
-import { GithubProvider } from '@gitroom/frontend/components/auth/providers/github.provider';
-import { OauthProvider } from '@gitroom/frontend/components/auth/providers/oauth.provider';
 import interClass from '@gitroom/react/helpers/inter.font';
 import { GoogleProvider } from '@gitroom/frontend/components/auth/providers/google.provider';
 import { useVariables } from '@gitroom/react/helpers/variable.context';
-import { FarcasterProvider } from '@gitroom/frontend/components/auth/providers/farcaster.provider';
-import WalletProvider from '@gitroom/frontend/components/auth/providers/wallet.provider';
 
 type Inputs = {
   email: string;
@@ -25,8 +21,7 @@ type Inputs = {
 
 export function Login() {
   const [loading, setLoading] = useState(false);
-  const { isGeneral, neynarClientId, billingEnabled, genericOauth } =
-    useVariables();
+  const { isGeneral, billingEnabled } = useVariables();
   const resolver = useMemo(() => {
     return classValidatorResolver(LoginUserDto);
   }, []);
@@ -65,17 +60,9 @@ export function Login() {
             Sign In
           </h1>
         </div>
-        {isGeneral && genericOauth ? (
-          <OauthProvider />
-        ) : !isGeneral ? (
-          <GithubProvider />
-        ) : (
-          <div className="gap-[5px] flex flex-col">
-            <GoogleProvider />
-            {!!neynarClientId && <FarcasterProvider />}
-            {billingEnabled && <WalletProvider />}
-          </div>
-        )}
+        <div className="gap-[5px] flex flex-col">
+          <GoogleProvider />
+        </div>
         <div className="h-[20px] mb-[24px] mt-[24px] relative">
           <div className="absolute w-full h-[1px] bg-fifth top-[50%] -translate-y-[50%]" />
           <div
