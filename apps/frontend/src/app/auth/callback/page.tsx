@@ -10,18 +10,20 @@ export default function AuthCallbackPage() {
   useEffect(() => {
     // 处理认证回调
     const handleAuthCallback = async () => {
-      const { searchParams } = new URL(window.location.href);
-      const code = searchParams.get('code');
+      const { data: { session }, error } = await supabase.auth.getSession();
       
-      if (code) {
-        try {
-          await supabase.auth.exchangeCodeForSession(code);
-          // 认证成功，重定向到首页或仪表盘
-          router.push('/launches');
-        } catch (error) {
-          console.error('认证回调处理错误:', error);
-          router.push('/login?error=认证失败');
-        }
+      if (error) {
+        console.error('认证错误:', error.message);
+        router.push('/auth/login?error=认证失败');
+        return;
+      }
+
+      if (session) {
+        // 认证成功，重定向到主页或仪表板
+        router.push('/launches');
+      } else {
+        // 没有会话，重定向到登录页
+        router.push('/auth/login');
       }
     };
 
@@ -29,10 +31,10 @@ export default function AuthCallbackPage() {
   }, [router]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
+    <div className="flex min-h-screen items-center justify-center">
       <div className="text-center">
-        <h2 className="text-2xl font-semibold mb-4">正在处理登录...</h2>
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary mx-auto"></div>
+        <h2 className="text-2xl font-semibold mb-4">认证中...</h2>
+        <p>请稍候，正在处理您的登录...</p>
       </div>
     </div>
   );
